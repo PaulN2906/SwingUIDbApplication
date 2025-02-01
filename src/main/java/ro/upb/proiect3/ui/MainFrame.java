@@ -10,11 +10,10 @@ public class MainFrame extends JFrame {
         setSize(800, 600);
         setLocationRelativeTo(null);
 
-        // Folosim un tabbed pane, unde un tab e "Autori"
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Autori", new AutoriPanel());
-
-        // Poți adăuga tab și pentru Carti, Biblioteci, etc.
+        tabbedPane.add("Cărți", new CartiPanel());
+        tabbedPane.add("Biblioteci", new BiblioteciPanel());
 
         add(tabbedPane, BorderLayout.CENTER);
     }

@@ -9,7 +9,6 @@ import java.util.List;
 
 public class AutoriDAO {
 
-    // 1. Insert Autor
     public static void insert(Autor autor) {
         String sql = "INSERT INTO autori (NumeAutor, PrenumeAutor, TaraOrigine) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -25,7 +24,6 @@ public class AutoriDAO {
         }
     }
 
-    // 2. Select All Autori
     public static List<Autor> findAll() {
         List<Autor> lista = new ArrayList<>();
         String sql = "SELECT * FROM autori";
@@ -49,7 +47,6 @@ public class AutoriDAO {
         return lista;
     }
 
-    // 3. Update Autor
     public static void update(Autor autor) {
         String sql = "UPDATE autori SET NumeAutor=?, PrenumeAutor=?, TaraOrigine=? WHERE AutorID=?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -66,7 +63,6 @@ public class AutoriDAO {
         }
     }
 
-    // 4. Delete Autor
     public static void delete(int autorID) {
         String sql = "DELETE FROM autori WHERE AutorID=?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -80,7 +76,6 @@ public class AutoriDAO {
         }
     }
 
-    // (Opțional) findById
     public static Autor findById(int autorID) {
         String sql = "SELECT * FROM autori WHERE AutorID=?";
         try (Connection conn = DatabaseConnection.getConnection();

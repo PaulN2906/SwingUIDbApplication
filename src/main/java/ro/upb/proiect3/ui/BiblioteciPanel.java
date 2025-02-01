@@ -1,42 +1,36 @@
 package ro.upb.proiect3.ui;
 
-import ro.upb.proiect3.dao.AutoriDAO;
-import ro.upb.proiect3.model.Autor;
+import ro.upb.proiect3.dao.BiblioteciDAO;
+import ro.upb.proiect3.model.Biblioteca;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class AutoriPanel extends JPanel {
+public class BiblioteciPanel extends JPanel {
 
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public AutoriPanel() {
+    public BiblioteciPanel() {
         setLayout(new BorderLayout());
 
-        String[] columnNames = {"Select", "ID Autor", "Nume Autor", "Prenume Autor", "Tara Origine"};
-
+        String[] columnNames = {"Select", "Biblioteca ID", "Denumire", "Adresa"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0) {
-                    return Boolean.class;
-                } else if (columnIndex == 1) {
-                    return Integer.class;
-                }
+                if (columnIndex == 0) return Boolean.class;
+                if (columnIndex == 1) return Integer.class;
                 return String.class;
             }
-
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 0; // doar checkbox
+                return column == 0;
             }
         };
 
         table = new JTable(tableModel);
-
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -50,33 +44,31 @@ public class AutoriPanel extends JPanel {
         buttonPanel.add(addBtn);
         buttonPanel.add(editBtn);
         buttonPanel.add(deleteBtn);
-
         add(buttonPanel, BorderLayout.SOUTH);
 
         refreshBtn.addActionListener(e -> refreshTable());
         addBtn.addActionListener(e -> showAddForm());
         editBtn.addActionListener(e -> showEditForm());
-        deleteBtn.addActionListener(e -> deleteSelectedAutori());
+        deleteBtn.addActionListener(e -> deleteSelected());
 
         refreshTable();
     }
 
     private void refreshTable() {
         tableModel.setRowCount(0);
-        List<Autor> autori = AutoriDAO.findAll();
-        for (Autor a : autori) {
-            Object[] rowData = {false, a.getAutorID(), a.getNumeAutor(), a.getPrenumeAutor(), a.getTaraOrigine()};
+        List<Biblioteca> biblioteci = BiblioteciDAO.findAll();
+        for (Biblioteca b : biblioteci) {
+            Object[] rowData = {false, b.getBibliotecaID(), b.getDenumire(), b.getAdresa()};
             tableModel.addRow(rowData);
         }
     }
 
     private void showAddForm() {
         Frame parent = JOptionPane.getFrameForComponent(this);
-        AutorFormDialog formDialog = new AutorFormDialog(parent);
+        BibliotecaFormDialog formDialog = new BibliotecaFormDialog(parent);
         formDialog.setVisible(true);
         if (formDialog.isSucceeded()) {
-            // Inserăm noul autor în DB
-            AutoriDAO.insert(formDialog.getAutor());
+            BiblioteciDAO.insert(formDialog.getBiblioteca());
             refreshTable();
         }
     }
@@ -84,32 +76,30 @@ public class AutoriPanel extends JPanel {
     private void showEditForm() {
         int row = table.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Selectează un autor pentru editare!");
+            JOptionPane.showMessageDialog(this, "Selectează o bibliotecă pentru editare!");
             return;
         }
-        int autorID = (int) table.getValueAt(row, 1);
-        Autor autor = AutoriDAO.findById(autorID);
-        if (autor == null) {
-            JOptionPane.showMessageDialog(this, "Autorul selectat nu a fost găsit în DB!");
+        int bibliotecaID = (int) tableModel.getValueAt(row, 1);
+        Biblioteca bib = BiblioteciDAO.findById(bibliotecaID);
+        if (bib == null) {
+            JOptionPane.showMessageDialog(this, "Biblioteca nu a fost găsită în DB!");
             return;
         }
         Frame parent = JOptionPane.getFrameForComponent(this);
-        AutorFormDialog formDialog = new AutorFormDialog(parent, autor);
+        BibliotecaFormDialog formDialog = new BibliotecaFormDialog(parent, bib);
         formDialog.setVisible(true);
         if (formDialog.isSucceeded()) {
-            AutoriDAO.update(formDialog.getAutor());
+            BiblioteciDAO.update(formDialog.getBiblioteca());
             refreshTable();
         }
     }
 
-    private void deleteSelectedAutori() {
+    private void deleteSelected() {
         for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
-            Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0);
-            if (isSelected != null && isSelected) {
-                int autorID = (int) tableModel.getValueAt(i, 1);
-
-                AutoriDAO.delete(autorID);
-
+            Boolean selected = (Boolean) tableModel.getValueAt(i, 0);
+            if (selected != null && selected) {
+                int bibliotecaID = (int) tableModel.getValueAt(i, 1);
+                BiblioteciDAO.delete(bibliotecaID);
                 tableModel.removeRow(i);
             }
         }
