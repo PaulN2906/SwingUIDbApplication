@@ -6,10 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BibliotecaFormDialog extends JDialog {
-    private JTextField denumireField;
-    private JTextField adresaField;
-    private JButton saveButton;
-    private JButton cancelButton;
+    private final JTextField denumireField;
+    private final JTextField adresaField;
     private boolean succeeded;
     private Biblioteca biblioteca;
 
@@ -50,8 +48,8 @@ public class BibliotecaFormDialog extends JDialog {
             adresaField.setText(biblioteca.getAdresa());
         }
 
-        saveButton = new JButton("Save");
-        cancelButton = new JButton("Cancel");
+        JButton saveButton = new JButton("Save");
+        JButton cancelButton = new JButton("Cancel");
 
         JPanel bp = new JPanel();
         bp.add(saveButton);

@@ -6,11 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CarteFormDialog extends JDialog {
-    private JTextField denumireField;
-    private JTextField anField;
-    private JTextField edituraField;
-    private JButton saveButton;
-    private JButton cancelButton;
+    private final JTextField denumireField;
+    private final JTextField anField;
+    private final JTextField edituraField;
     private boolean succeeded;
     private Carte carte;
 
@@ -62,8 +60,8 @@ public class CarteFormDialog extends JDialog {
             edituraField.setText(carte.getEditura());
         }
 
-        saveButton = new JButton("Save");
-        cancelButton = new JButton("Cancel");
+        JButton saveButton = new JButton("Save");
+        JButton cancelButton = new JButton("Cancel");
 
         JPanel bp = new JPanel();
         bp.add(saveButton);

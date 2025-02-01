@@ -10,8 +10,8 @@ import java.util.List;
 
 public class AutoriPanel extends JPanel {
 
-    private JTable table;
-    private DefaultTableModel tableModel;
+    private final JTable table;
+    private final DefaultTableModel tableModel;
 
     public AutoriPanel() {
         setLayout(new BorderLayout());
@@ -31,7 +31,7 @@ public class AutoriPanel extends JPanel {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 0; // doar checkbox
+                return column == 0;
             }
         };
 
@@ -75,7 +75,6 @@ public class AutoriPanel extends JPanel {
         AutorFormDialog formDialog = new AutorFormDialog(parent);
         formDialog.setVisible(true);
         if (formDialog.isSucceeded()) {
-            // Inserăm noul autor în DB
             AutoriDAO.insert(formDialog.getAutor());
             refreshTable();
         }

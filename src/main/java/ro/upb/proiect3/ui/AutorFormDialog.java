@@ -4,16 +4,12 @@ import ro.upb.proiect3.model.Autor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class AutorFormDialog extends JDialog {
 
-    private JTextField numeField;
-    private JTextField prenumeField;
-    private JTextField taraField;
-    private JButton saveButton;
-    private JButton cancelButton;
+    private final JTextField numeField;
+    private final JTextField prenumeField;
+    private final JTextField taraField;
     private boolean succeeded;
     private Autor autor;
 
@@ -66,38 +62,35 @@ public class AutorFormDialog extends JDialog {
             taraField.setText(autor.getTaraOrigine());
         }
 
-        saveButton = new JButton("Save");
-        cancelButton = new JButton("Cancel");
+        JButton saveButton = new JButton("Save");
+        JButton cancelButton = new JButton("Cancel");
 
         JPanel bp = new JPanel();
         bp.add(saveButton);
         bp.add(cancelButton);
 
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (numeField.getText().trim().isEmpty() ||
-                        prenumeField.getText().trim().isEmpty() ||
-                        taraField.getText().trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(AutorFormDialog.this,
-                            "Toate câmpurile trebuie completate!",
-                            "Eroare",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                succeeded = true;
-                if (AutorFormDialog.this.autor == null) {
-                    AutorFormDialog.this.autor = new Autor(0,
-                            numeField.getText().trim(),
-                            prenumeField.getText().trim(),
-                            taraField.getText().trim());
-                } else {
-                    AutorFormDialog.this.autor.setNumeAutor(numeField.getText().trim());
-                    AutorFormDialog.this.autor.setPrenumeAutor(prenumeField.getText().trim());
-                    AutorFormDialog.this.autor.setTaraOrigine(taraField.getText().trim());
-                }
-                dispose();
+        saveButton.addActionListener(e -> {
+            if (numeField.getText().trim().isEmpty() ||
+                    prenumeField.getText().trim().isEmpty() ||
+                    taraField.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(AutorFormDialog.this,
+                        "Toate câmpurile trebuie completate!",
+                        "Eroare",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
             }
+            succeeded = true;
+            if (AutorFormDialog.this.autor == null) {
+                AutorFormDialog.this.autor = new Autor(0,
+                        numeField.getText().trim(),
+                        prenumeField.getText().trim(),
+                        taraField.getText().trim());
+            } else {
+                AutorFormDialog.this.autor.setNumeAutor(numeField.getText().trim());
+                AutorFormDialog.this.autor.setPrenumeAutor(prenumeField.getText().trim());
+                AutorFormDialog.this.autor.setTaraOrigine(taraField.getText().trim());
+            }
+            dispose();
         });
 
         cancelButton.addActionListener(e -> {

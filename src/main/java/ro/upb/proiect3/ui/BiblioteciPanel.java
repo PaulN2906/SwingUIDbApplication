@@ -10,8 +10,8 @@ import java.util.List;
 
 public class BiblioteciPanel extends JPanel {
 
-    private JTable table;
-    private DefaultTableModel tableModel;
+    private final JTable table;
+    private final DefaultTableModel tableModel;
 
     public BiblioteciPanel() {
         setLayout(new BorderLayout());
