@@ -91,8 +91,8 @@ public class ContributiiPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Selectează o contribuție pentru editare!");
             return;
         }
-        Contributie c = new Contributie();
-        c.setContributieID((int) tableModel.getValueAt(row, 1));
+        int contribID = (int) tableModel.getValueAt(row, 1);
+        Contributie c = ContributiiDAO.findById(contribID);
         Frame parent = JOptionPane.getFrameForComponent(this);
         ContributieFormDialog formDialog = new ContributieFormDialog(parent, c);
         formDialog.setVisible(true);

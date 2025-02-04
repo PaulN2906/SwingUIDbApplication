@@ -6,8 +6,12 @@ import ro.upb.proiect3.model.Role;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
     public static boolean registerUser(User user) {
         String sql = "INSERT INTO users (Username, PasswordHash, Role) VALUES (?, ?, ?)";
@@ -22,7 +26,7 @@ public class UserDAO {
                 return rows > 0;
             }
         } catch(SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error registering user", e);
         }
         return false;
     }
@@ -49,7 +53,7 @@ public class UserDAO {
                 }
             }
         } catch(SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error validating user", e);
         }
         return null;
     }

@@ -1,19 +1,13 @@
 package ro.upb.proiect3.ui;
 
-import ro.upb.proiect3.dao.BiblioteciDAO;
-import ro.upb.proiect3.dao.CartiDAO;
-import ro.upb.proiect3.model.Biblioteca;
-import ro.upb.proiect3.model.Carte;
 import ro.upb.proiect3.model.Stoc;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class StocFormDialog extends JDialog {
 
-    private final JComboBox<Carte> bookCombo;
-    private final JComboBox<Biblioteca> libraryCombo;
+    private final JTextField bookIdField;
+    private final JTextField libraryIdField;
     private final JTextField nrField;
     private boolean succeeded;
     private Stoc stoc;
@@ -30,33 +24,25 @@ public class StocFormDialog extends JDialog {
         cs.fill = GridBagConstraints.HORIZONTAL;
         cs.insets = new Insets(5, 5, 5, 5);
 
-        JLabel bookLabel = new JLabel("Carte:");
+        JLabel bookLabel = new JLabel("ID Carte:");
         cs.gridx = 0;
         cs.gridy = 0;
         panel.add(bookLabel, cs);
 
-        bookCombo = new JComboBox<>();
-        List<Carte> carti = CartiDAO.findAll();
-        for (Carte c : carti) {
-            bookCombo.addItem(c);
-        }
+        bookIdField = new JTextField(20);
         cs.gridx = 1;
         cs.gridy = 0;
-        panel.add(bookCombo, cs);
+        panel.add(bookIdField, cs);
 
-        JLabel libraryLabel = new JLabel("Bibliotecă:");
+        JLabel libraryLabel = new JLabel("ID Bibliotecă:");
         cs.gridx = 0;
         cs.gridy = 1;
         panel.add(libraryLabel, cs);
 
-        libraryCombo = new JComboBox<>();
-        List<Biblioteca> biblioteci = BiblioteciDAO.findAll();
-        for (Biblioteca b : biblioteci) {
-            libraryCombo.addItem(b);
-        }
+        libraryIdField = new JTextField(20);
         cs.gridx = 1;
         cs.gridy = 1;
-        panel.add(libraryCombo, cs);
+        panel.add(libraryIdField, cs);
 
         JLabel nrLabel = new JLabel("Nr. Exemplare:");
         cs.gridx = 0;
@@ -69,18 +55,8 @@ public class StocFormDialog extends JDialog {
         panel.add(nrField, cs);
 
         if (stoc != null) {
-            for (int i = 0; i < bookCombo.getItemCount(); i++) {
-                if (bookCombo.getItemAt(i).getCarteID() == stoc.getCarteID()) {
-                    bookCombo.setSelectedIndex(i);
-                    break;
-                }
-            }
-            for (int i = 0; i < libraryCombo.getItemCount(); i++) {
-                if (libraryCombo.getItemAt(i).getBibliotecaID() == stoc.getBibliotecaID()) {
-                    libraryCombo.setSelectedIndex(i);
-                    break;
-                }
-            }
+            bookIdField.setText(String.valueOf(stoc.getCarteID()));
+            libraryIdField.setText(String.valueOf(stoc.getBibliotecaID()));
             nrField.setText(String.valueOf(stoc.getNrExemplare()));
         }
 
@@ -92,19 +68,25 @@ public class StocFormDialog extends JDialog {
         bp.add(cancelButton);
 
         saveButton.addActionListener(e -> {
-            if (nrField.getText().trim().isEmpty()) {
+            if (bookIdField.getText().trim().isEmpty() ||
+                    libraryIdField.getText().trim().isEmpty() ||
+                    nrField.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(StocFormDialog.this,
-                        "Câmpul pentru numărul de exemplare trebuie completat!",
+                        "Toate câmpurile trebuie completate!",
                         "Eroare",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            int bookId;
+            int libraryId;
             int nr;
             try {
+                bookId = Integer.parseInt(bookIdField.getText().trim());
+                libraryId = Integer.parseInt(libraryIdField.getText().trim());
                 nr = Integer.parseInt(nrField.getText().trim());
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(StocFormDialog.this,
-                        "Nr. Exemplare trebuie să fie un număr!",
+                        "ID-urile și numărul de exemplare trebuie să fie numere!",
                         "Eroare",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -113,12 +95,8 @@ public class StocFormDialog extends JDialog {
             if (StocFormDialog.this.stoc == null) {
                 StocFormDialog.this.stoc = new Stoc();
             }
-            Carte selectedBook = (Carte) bookCombo.getSelectedItem();
-            Biblioteca selectedLibrary = (Biblioteca) libraryCombo.getSelectedItem();
-            assert selectedBook != null;
-            StocFormDialog.this.stoc.setCarteID(selectedBook.getCarteID());
-            assert selectedLibrary != null;
-            StocFormDialog.this.stoc.setBibliotecaID(selectedLibrary.getBibliotecaID());
+            StocFormDialog.this.stoc.setCarteID(bookId);
+            StocFormDialog.this.stoc.setBibliotecaID(libraryId);
             StocFormDialog.this.stoc.setNrExemplare(nr);
             dispose();
         });

@@ -1,19 +1,13 @@
 package ro.upb.proiect3.ui;
 
-import ro.upb.proiect3.dao.AutoriDAO;
-import ro.upb.proiect3.dao.CartiDAO;
-import ro.upb.proiect3.model.Autor;
-import ro.upb.proiect3.model.Carte;
 import ro.upb.proiect3.model.Contributie;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class ContributieFormDialog extends JDialog {
 
-    private final JComboBox<Autor> authorCombo;
-    private final JComboBox<Carte> bookCombo;
+    private final JTextField authorIdField;
+    private final JTextField bookIdField;
     private final JTextField rolField;
     private boolean succeeded;
     private Contributie contributie;
@@ -31,33 +25,25 @@ public class ContributieFormDialog extends JDialog {
         cs.fill = GridBagConstraints.HORIZONTAL;
         cs.insets = new Insets(5, 5, 5, 5);
 
-        JLabel authorLabel = new JLabel("Autor:");
+        JLabel authorLabel = new JLabel("ID Autor:");
         cs.gridx = 0;
         cs.gridy = 0;
         panel.add(authorLabel, cs);
 
-        authorCombo = new JComboBox<>();
-        List<Autor> autori = AutoriDAO.findAll();
-        for (Autor a : autori) {
-            authorCombo.addItem(a);
-        }
+        authorIdField = new JTextField(20);
         cs.gridx = 1;
         cs.gridy = 0;
-        panel.add(authorCombo, cs);
+        panel.add(authorIdField, cs);
 
-        JLabel bookLabel = new JLabel("Carte:");
+        JLabel bookLabel = new JLabel("ID Carte:");
         cs.gridx = 0;
         cs.gridy = 1;
         panel.add(bookLabel, cs);
 
-        bookCombo = new JComboBox<>();
-        List<Carte> carti = CartiDAO.findAll();
-        for (Carte c : carti) {
-            bookCombo.addItem(c);
-        }
+        bookIdField = new JTextField(20);
         cs.gridx = 1;
         cs.gridy = 1;
-        panel.add(bookCombo, cs);
+        panel.add(bookIdField, cs);
 
         JLabel rolLabel = new JLabel("Rol Contribuție:");
         cs.gridx = 0;
@@ -70,18 +56,8 @@ public class ContributieFormDialog extends JDialog {
         panel.add(rolField, cs);
 
         if (contributie != null) {
-            for (int i = 0; i < authorCombo.getItemCount(); i++) {
-                if (authorCombo.getItemAt(i).getAutorID() == contributie.getAutorID()) {
-                    authorCombo.setSelectedIndex(i);
-                    break;
-                }
-            }
-            for (int i = 0; i < bookCombo.getItemCount(); i++) {
-                if (bookCombo.getItemAt(i).getCarteID() == contributie.getCarteID()) {
-                    bookCombo.setSelectedIndex(i);
-                    break;
-                }
-            }
+            authorIdField.setText(String.valueOf(contributie.getAutorID()));
+            bookIdField.setText(String.valueOf(contributie.getCarteID()));
             rolField.setText(contributie.getRolContributie());
         }
 
@@ -93,9 +69,23 @@ public class ContributieFormDialog extends JDialog {
         bp.add(cancelButton);
 
         saveButton.addActionListener(e -> {
-            if (rolField.getText().trim().isEmpty()) {
+            if (authorIdField.getText().trim().isEmpty() ||
+                    bookIdField.getText().trim().isEmpty() ||
+                    rolField.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(ContributieFormDialog.this,
-                        "Câmpul pentru rol trebuie completat!",
+                        "Toate câmpurile trebuie completate!",
+                        "Eroare",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int authorId;
+            int bookId;
+            try {
+                authorId = Integer.parseInt(authorIdField.getText().trim());
+                bookId = Integer.parseInt(bookIdField.getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(ContributieFormDialog.this,
+                        "ID-urile trebuie să fie numere!",
                         "Eroare",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -104,10 +94,8 @@ public class ContributieFormDialog extends JDialog {
             if (ContributieFormDialog.this.contributie == null) {
                 ContributieFormDialog.this.contributie = new Contributie();
             }
-            Autor selectedAuthor = (Autor) authorCombo.getSelectedItem();
-            Carte selectedBook = (Carte) bookCombo.getSelectedItem();
-            ContributieFormDialog.this.contributie.setAutorID(selectedAuthor.getAutorID());
-            ContributieFormDialog.this.contributie.setCarteID(selectedBook.getCarteID());
+            ContributieFormDialog.this.contributie.setAutorID(authorId);
+            ContributieFormDialog.this.contributie.setCarteID(bookId);
             ContributieFormDialog.this.contributie.setRolContributie(rolField.getText().trim());
             dispose();
         });

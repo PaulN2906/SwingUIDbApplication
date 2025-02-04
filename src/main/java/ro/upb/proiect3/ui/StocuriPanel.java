@@ -94,9 +94,11 @@ public class StocuriPanel extends JPanel {
             return;
         }
         int stocID = (int) tableModel.getValueAt(row, 1);
-        Stoc s = new Stoc();
-        s.setStocID(stocID);
-        s.setNrExemplare((int) tableModel.getValueAt(row, 4));
+        Stoc s = StocuriDAO.findById(stocID);
+        if (s == null) {
+            JOptionPane.showMessageDialog(this, "Stocul nu a fost găsit în DB!");
+            return;
+        }
         Frame parent = JOptionPane.getFrameForComponent(this);
         StocFormDialog formDialog = new StocFormDialog(parent, s);
         formDialog.setVisible(true);
