@@ -2,6 +2,8 @@ package ro.upb.proiect3.ui;
 
 import ro.upb.proiect3.dao.CartiDAO;
 import ro.upb.proiect3.model.Carte;
+import ro.upb.proiect3.model.User;
+import ro.upb.proiect3.model.Role;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,7 +15,7 @@ public class CartiPanel extends JPanel {
     private final JTable table;
     private final DefaultTableModel tableModel;
 
-    public CartiPanel() {
+    public CartiPanel(User loggedUser) {
         setLayout(new BorderLayout());
 
         String[] columnNames = {"Select", "Carte ID", "Denumire", "An Aparitie", "Editura"};
@@ -51,6 +53,10 @@ public class CartiPanel extends JPanel {
         editBtn.addActionListener(e -> showEditForm());
         deleteBtn.addActionListener(e -> deleteSelected());
 
+        if (!loggedUser.getRole().equals(Role.ADMIN)) {
+            deleteBtn.setEnabled(false);
+        }
+
         refreshTable();
     }
 
@@ -79,7 +85,7 @@ public class CartiPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Selectează o carte pentru editare!");
             return;
         }
-        int carteID = (int) table.getValueAt(row, 1);
+        int carteID = (int) tableModel.getValueAt(row, 1);
         Carte carte = CartiDAO.findById(carteID);
         if (carte == null) {
             JOptionPane.showMessageDialog(this, "Cartea nu a fost găsită în DB!");

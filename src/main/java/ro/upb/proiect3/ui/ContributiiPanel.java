@@ -6,6 +6,8 @@ import ro.upb.proiect3.dao.ContributiiDAO;
 import ro.upb.proiect3.model.Autor;
 import ro.upb.proiect3.model.Carte;
 import ro.upb.proiect3.model.Contributie;
+import ro.upb.proiect3.model.User;
+import ro.upb.proiect3.model.Role;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,18 +19,15 @@ public class ContributiiPanel extends JPanel {
     private final JTable table;
     private final DefaultTableModel tableModel;
 
-    public ContributiiPanel() {
+    public ContributiiPanel(User loggedUser) {
         setLayout(new BorderLayout());
 
         String[] columnNames = {"Select", "ID", "Autor", "Carte", "Rol Contribuție"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0) {
-                    return Boolean.class;
-                } else if (columnIndex == 1) {
-                    return Integer.class;
-                }
+                if (columnIndex == 0) return Boolean.class;
+                if (columnIndex == 1) return Integer.class;
                 return String.class;
             }
             @Override
@@ -56,7 +55,9 @@ public class ContributiiPanel extends JPanel {
         addBtn.addActionListener(e -> showAddForm());
         editBtn.addActionListener(e -> showEditForm());
         deleteBtn.addActionListener(e -> deleteSelected());
-
+        if (!loggedUser.getRole().equals(Role.ADMIN)) {
+            deleteBtn.setEnabled(false);
+        }
         refreshTable();
     }
 

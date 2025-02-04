@@ -2,6 +2,8 @@ package ro.upb.proiect3.ui;
 
 import ro.upb.proiect3.dao.AutoriDAO;
 import ro.upb.proiect3.model.Autor;
+import ro.upb.proiect3.model.User;
+import ro.upb.proiect3.model.Role;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,7 +15,7 @@ public class AutoriPanel extends JPanel {
     private final JTable table;
     private final DefaultTableModel tableModel;
 
-    public AutoriPanel() {
+    public AutoriPanel(User loggedUser) {
         setLayout(new BorderLayout());
 
         String[] columnNames = {"Select", "ID Autor", "Nume Autor", "Prenume Autor", "Tara Origine"};
@@ -57,7 +59,9 @@ public class AutoriPanel extends JPanel {
         addBtn.addActionListener(e -> showAddForm());
         editBtn.addActionListener(e -> showEditForm());
         deleteBtn.addActionListener(e -> deleteSelectedAutori());
-
+        if (!loggedUser.getRole().equals(Role.ADMIN)) {
+            deleteBtn.setEnabled(false);
+        }
         refreshTable();
     }
 
@@ -86,7 +90,7 @@ public class AutoriPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Selectează un autor pentru editare!");
             return;
         }
-        int autorID = (int) table.getValueAt(row, 1);
+        int autorID = (int) tableModel.getValueAt(row, 1);
         Autor autor = AutoriDAO.findById(autorID);
         if (autor == null) {
             JOptionPane.showMessageDialog(this, "Autorul selectat nu a fost găsit în DB!");
@@ -106,9 +110,7 @@ public class AutoriPanel extends JPanel {
             Boolean isSelected = (Boolean) tableModel.getValueAt(i, 0);
             if (isSelected != null && isSelected) {
                 int autorID = (int) tableModel.getValueAt(i, 1);
-
                 AutoriDAO.delete(autorID);
-
                 tableModel.removeRow(i);
             }
         }

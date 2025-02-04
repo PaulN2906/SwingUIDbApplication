@@ -6,6 +6,8 @@ import ro.upb.proiect3.dao.StocuriDAO;
 import ro.upb.proiect3.model.Carte;
 import ro.upb.proiect3.model.Stoc;
 import ro.upb.proiect3.model.Biblioteca;
+import ro.upb.proiect3.model.User;
+import ro.upb.proiect3.model.Role;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +19,7 @@ public class StocuriPanel extends JPanel {
     private final JTable table;
     private final DefaultTableModel tableModel;
 
-    public StocuriPanel() {
+    public StocuriPanel(User loggedUser) {
         setLayout(new BorderLayout());
 
         String[] columnNames = {"Select", "StocID", "Carte", "Bibliotecă", "Nr. Exemplare"};
@@ -53,6 +55,10 @@ public class StocuriPanel extends JPanel {
         addBtn.addActionListener(e -> showAddForm());
         editBtn.addActionListener(e -> showEditForm());
         deleteBtn.addActionListener(e -> deleteSelected());
+
+        if (!loggedUser.getRole().equals(Role.ADMIN)) {
+            deleteBtn.setEnabled(false);
+        }
 
         refreshTable();
     }

@@ -2,6 +2,8 @@ package ro.upb.proiect3.ui;
 
 import ro.upb.proiect3.dao.BiblioteciDAO;
 import ro.upb.proiect3.model.Biblioteca;
+import ro.upb.proiect3.model.User;
+import ro.upb.proiect3.model.Role;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,7 +15,7 @@ public class BiblioteciPanel extends JPanel {
     private final JTable table;
     private final DefaultTableModel tableModel;
 
-    public BiblioteciPanel() {
+    public BiblioteciPanel(User loggedUser) {
         setLayout(new BorderLayout());
 
         String[] columnNames = {"Select", "Biblioteca ID", "Denumire", "Adresa"};
@@ -50,6 +52,10 @@ public class BiblioteciPanel extends JPanel {
         addBtn.addActionListener(e -> showAddForm());
         editBtn.addActionListener(e -> showEditForm());
         deleteBtn.addActionListener(e -> deleteSelected());
+
+        if (!loggedUser.getRole().equals(Role.ADMIN)) {
+            deleteBtn.setEnabled(false);
+        }
 
         refreshTable();
     }
