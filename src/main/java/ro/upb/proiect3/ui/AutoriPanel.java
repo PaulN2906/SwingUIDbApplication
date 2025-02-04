@@ -38,6 +38,10 @@ public class AutoriPanel extends JPanel {
         };
 
         table = new JTable(tableModel);
+        table.setShowHorizontalLines(true);
+        table.setShowVerticalLines(true);
+        table.setIntercellSpacing(new Dimension(1, 1));
+        table.setGridColor(Color.GRAY);
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
